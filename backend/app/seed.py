@@ -1,6 +1,7 @@
 import json
 from app.db import connect
 from app.engines.estimate import estimate_room
+from app.modules import waste_pct as waste_mod
 
 def init_db():
     conn = connect()
@@ -20,8 +21,11 @@ def init_db():
         conn.execute("INSERT INTO openings(room_id,kind,w,h) VALUES (2,'window',1.2,1.5)")
         conn.execute("INSERT INTO settings(key,value) VALUES ('coverage','8')")
         conn.execute("INSERT INTO settings(key,value) VALUES ('coats','2')")
+        conn.execute("INSERT INTO settings(key,value) VALUES ('waste_pct','0')")
+        conn.execute("INSERT INTO settings(key,value) VALUES ('waste_max_pct','20')")
         est = estimate_room(5, 4, 2.8, [{"w": 0.9, "h": 2.1}, {"w": 1.5, "h": 1.4}], 8, 2)
+        est = {**est, **waste_mod.apply_waste(est["liters"], 0)}
         conn.execute("INSERT INTO calc_runs(kind,room_id,input_json,result_json,created_at) VALUES ('estimate',1,?,?,datetime('now'))",
-            (json.dumps({"room_id": 1}), json.dumps(est)))
+            (json.dumps({"room_id": 1, "waste_pct": 0}), json.dumps(est)))
         conn.commit()
     conn.close()

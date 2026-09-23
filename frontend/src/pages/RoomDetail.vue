@@ -12,6 +12,6 @@ const load = async () => {
 onMounted(load); watch(() => route.params.id, load)
 </script>
 <template><div class="page" v-if="detail"><h1>{{ detail.room.name }}</h1>
-<p>净面积 {{ est?.net_m2 }} m² · 需漆 <span class="hero-num">{{ est?.liters }} L</span></p>
+<p>净面积 {{ est?.net_m2 }} m² · 需漆 <span class="hero-num">{{ est?.liters }} L</span> · 应付 <span class="hero-num">{{ est?.payable_liters }} L</span>（含损耗 {{ est?.waste_pct }}%）</p>
 <ul><li v-for="o in detail.openings" :key="o.id">{{ o.kind }} {{ o.w }}×{{ o.h }}</li></ul>
 </div></template>
